@@ -1,25 +1,38 @@
-import {Injectable,UnauthorizedException} from '@nestjs/common';
-import  {JwtService}from '@nestjs/jwt';
+import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ActivityLog } from 'src/entites/ActivityLog';
+import { User } from 'src/entites/User';
+import { LoginUser, RegisterUser } from 'src/types/user';
 import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class AuthService{
+export class AuthService {
     constructor(
-        private usersService: UsersService,
-        private jwtService:JwtService
-    ){
+         private  userSerive: UsersService,
+         private jwtService: JwtService,
+         @InjectRepository(ActivityLog) private activityLogRepo: Repository<ActivityLog>,
+    ){}
 
+
+    async register(data: RegisterUser){
+       return this.userSerive.createRecord(data);
     }
 
-    async signIn(username,pass){
-        const user = await this.usersService.findOne(username);
-        if(user?.password !==pass){
-            throw new  UnauthorizedException();
-        }
 
-        const payload ={ username:user.username,sub:user.userId};
-        return {
-            access_token:await this.jwtService.signAsync(payload)
-        }
-    }
+    async login(user: User, ip: string, userAgent: string ) {
+       // console.log(user)
+        const payload = { sub: user.id, role: user.role };
+
+         // 3. Save activity
+       /* await this.activityLogRepo.save({ 
+            userId: user.id, 
+            ipAddress: ip, 
+            userAgent 
+        });*/
+
+        return { access_token: this.jwtService.sign(payload) };
+      }
+
 }
