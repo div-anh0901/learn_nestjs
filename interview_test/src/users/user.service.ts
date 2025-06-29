@@ -13,11 +13,11 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const user = new this.userModel({
+    const user = this.userModel.create({
       ...createUserDto,
       password: hashedPassword,
     });
-    return user.save();
+    return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
