@@ -37,3 +37,14 @@ interface FlyingBird extends Bird {
   }
 
 
+
+  class UserService {
+    constructor(private db: Database) {}
+  
+    createUser(data: string) {
+      
+        const db = new MongoDBDatabase(); // or new MySQLDatabase()
+        const userService = new UserService(db);
+        userService.createUser("Alice");
+    }
+  }
