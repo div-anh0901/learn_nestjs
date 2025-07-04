@@ -12,13 +12,16 @@ import { UserStudentService } from './students/user-student.service';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])
   ],
   controllers: [UsersController, UserStudentController],
-  providers: [UsersService, {
-    provide: "UserStudents",
-    useValue: UserStudentService
-  }],
+  providers: [
+    UsersService, 
+      {
+    provide: "IUserStudentService",
+    useClass: UserStudentService
+  }
+],
   exports: [UsersService, {
-    provide: "UserStudents",
-    useValue: UserStudentService
+    provide: "IUserStudentService",
+    useClass: UserStudentService
   }],
 })
 export class UsersModule {}

@@ -7,6 +7,7 @@ import {
     Request,
     UseGuards,
     Put,
+    Inject,
   } from '@nestjs/common';
   import { UsersService } from './user.service';
   import { CreateUserDto } from './dto/create-user.dto';

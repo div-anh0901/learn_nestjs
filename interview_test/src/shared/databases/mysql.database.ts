@@ -1,7 +1,8 @@
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Course } from 'src/courses/entities/course.entity';
+import { Course } from 'src/shared/entities/course.entity';
+import { Array_student } from '../entities/array_student.entity';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { Course } from 'src/courses/entities/course.entity';
         username: 'root',
         password: '12345678',
         database: 'TestMicroservice',
-        entities: [Course],
+        entities: [Course, Array_student],
         synchronize: true,
     }),
   ],

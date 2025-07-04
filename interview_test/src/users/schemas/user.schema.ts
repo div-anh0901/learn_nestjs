@@ -40,6 +40,13 @@ export class User extends Document {
 
   @Prop({ select: true, default: Date.now() })
   updatedAt?: Date;
+
+  @Prop({ select: true , default: true})
+  isActived ?: boolean; 
+
+  @Prop({ select: true , default: true})
+  status ?: boolean; 
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

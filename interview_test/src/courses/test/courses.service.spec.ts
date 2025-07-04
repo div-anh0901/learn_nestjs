@@ -1,6 +1,6 @@
 import { CoursesService } from "../courses.service";
 import { Repository } from 'typeorm';
-import { Course } from "../entities/course.entity";
+import { Course } from "../../shared/entities/course.entity";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 
