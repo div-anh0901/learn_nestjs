@@ -22,15 +22,15 @@ import {
             map((res: any) => {
               if (res?.data !== undefined) {
                 return {
-                  success: true,
+                  success:  res.success || true,
                   message: res.message || 'OK',
                   data: res.data,
                   ...(res.meta && { meta: res.meta }),
                 };
               }
               return {
-                success: true,
-                message: 'OK',
+                success: res.success || true,
+                message: res.message || 'OK',
                 data: res,
               };
         }),

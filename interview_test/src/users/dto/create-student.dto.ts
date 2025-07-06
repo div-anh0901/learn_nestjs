@@ -8,4 +8,5 @@ export class CreateStudentDto {
     role: string;
     codeId: string; // so cccd
     createBy: string;
+    password ?:string;
 }

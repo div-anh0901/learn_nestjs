@@ -8,6 +8,8 @@ import { ChangePasswordStudent } from "../dto/change-password-student.dto";
 import { UpdateCourseDto } from "src/courses/dto/update-course.dto";
 import { UpdateStudentDto } from "../dto/update-student.dto";
 import { PaginationQueryDto } from "src/utils/TypeGlobal";
+import { AddStudentToCourse, AddStudentToCourseMulti } from "../dto/student-and-course.dto";
+import { ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 
 @Controller("students")
@@ -82,6 +84,54 @@ export class UserStudentController {
             return  rs
         } catch (error) {
             return false
+        }
+    }
+
+    @Post("addStudentToCourse")
+    async addStudentToCourse(@Body() data: AddStudentToCourse){
+        try {
+           const rs = await this.userService.addStudentInCourse(data)
+            return  rs
+        } catch (error) {
+            return {
+                success: false,
+                data: null
+            }
+            
+        }
+    }
+
+    
+    @ApiOperation({ summary: 'Add multiple students to a course' })
+    @Post("addStudentToCourses")
+    @ApiBody({ type: AddStudentToCourseMulti })
+    @ApiResponse({
+        status: 201,
+        description: 'Students added to course successfully',
+        schema: {
+        example: {
+            meta: {
+            totalSuccess: 3,
+            totalFailed: 1,
+            },
+            addedStudents: [
+            { studentID: 's1', courseId: 'course-123' },
+            { studentID: 's2', courseId: 'course-123' },
+            ],
+        },
+        },
+    })
+    async addStudentToCourses(@Body() data: AddStudentToCourseMulti){
+       
+        try {
+            const rs = await this.userService.addStudentInCourseMutil(data)
+            return rs
+        } catch (error) {
+            return {
+                success: false,
+                data: null
+            }
+            
         }
     }
 }
