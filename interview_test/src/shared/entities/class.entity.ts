@@ -29,7 +29,10 @@ export class ClassSchedule{
     @Column({ default: false })
     isCanceled: boolean;
   
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
+
+    @CreateDateColumn({ type: 'timestamp' })
+    updatedDate: Date;
 
 }

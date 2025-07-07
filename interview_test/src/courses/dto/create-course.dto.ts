@@ -23,3 +23,13 @@ export class CreateCourseDto {
     @IsNotEmpty()
     teacher: string; // id co giao chu nhiem
   }
+
+
+  export class CourseType {
+    name: string;
+    title: string;
+    time: string;
+    description: string;
+    createdBy: string;
+    teacher: string;
+  }
