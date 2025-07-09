@@ -18,8 +18,12 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import { useState } from "react";
+import { User } from "./utils/type";
 
 export default function App() {
+  const [user, setUser] = useState<User>();
+  
   return (
     <>
       <Router>
