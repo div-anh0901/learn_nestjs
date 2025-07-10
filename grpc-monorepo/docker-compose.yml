@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  # Express API (gateway)
+  express-api:
+    build: ./express-api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongodb
+      - nest-microservice
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/express_auth
+    volumes:
+      - ./proto:/app/proto
+
+  # NestJS gRPC microservice
+  nest-microservice:
+    build: ./nest-microservice
+    ports:
+      - "50051:50051"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=12345678
+      - DB_DATABASE=fake_data
+    volumes:
+      - ./proto:/app/proto
+
+
+volumes:
+  mongo-data:
+  mysql-data:

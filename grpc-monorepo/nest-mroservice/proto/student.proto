@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package school;
+
+service SchoolService {
+  rpc CreateStudent (StudentDto) returns (Student);
+  rpc GetStudent (StudentId) returns (Student);
+  rpc CreateCourse (CourseDto) returns (Course);
+  rpc GetCourse (CourseId) returns (Course);
+}
+
+message StudentDto {
+  string name = 1;
+  int32 age = 2;
+}
+
+message StudentId {
+  int32 id = 1;
+}
+
+message Student {
+  int32 id = 1;
+  string name = 2;
+  int32 age = 3;
+}
+
+message CourseDto {
+  string title = 1;
+}
+
+message CourseId {
+  int32 id = 1;
+}
+
+message Course {
+  int32 id = 1;
+  string title = 2;
+}
