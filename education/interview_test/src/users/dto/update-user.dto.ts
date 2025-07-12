@@ -1,5 +1,14 @@
+import { IsNotEmpty } from "class-validator";
+
 // users/dto/update-user.dto.ts
 export class UpdateUserDto {
-    email?: string;
-    displayName?: string;
-  }
+    @IsNotEmpty()
+    username: string;
+    @IsNotEmpty()
+    email: string;
+    age: string;
+    avatar: string;
+    address: string;
+    codeId: string; // so cccd
+    phone: string;
+}

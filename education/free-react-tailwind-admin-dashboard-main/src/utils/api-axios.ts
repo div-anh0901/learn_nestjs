@@ -1,6 +1,6 @@
 // src/api/axios.ts
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { CreateUser, LoginType, ProfileType } from './type-request';
+import { CreateUser, LoginType, ProfileType, UpdateProfile } from './type-request';
 
 // Load base URL from .env
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -75,4 +75,18 @@ export const registerUser = async (data: CreateUser) => {
 export const getProfile =  async ()=>{
     const response = await api.get('/users/me');
     return response.data;
+}
+
+export const updateProfile = async(data: UpdateProfile) =>{
+  const response = await api.put('/users/me',data);
+    return response.data;
+}
+
+export const uploadFile = async (file: any)=>{
+  const response = await api.post('/upload-file/images', file, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data
 }

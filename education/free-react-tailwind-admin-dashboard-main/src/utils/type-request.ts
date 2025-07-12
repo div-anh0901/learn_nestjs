@@ -25,5 +25,19 @@ export type ProfileType={
     password ?:string;
     isActived?: boolean;
     status?: boolean;
-    phone: boolean;
+    phone: string;
+}
+export type UpdateProfile = {
+    username: string;
+    email : string;
+    age ?: string;
+    avatar ?: string;
+    address ?: string;
+    role ?: string;
+    codeId ?: string; // so cccd
+    createBy ?: string;
+    password ?:string;
+    isActived?: boolean;
+    status?: boolean;
+    phone?: string;
 }

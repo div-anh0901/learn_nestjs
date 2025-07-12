@@ -5,25 +5,79 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { ProfileType } from "../../utils/type-request";
 import UploadAvatar from "../form/form-elements/UploadAvatar";
+import { useCallback, useEffect, useState } from "react";
+import { updateProfile } from "../../utils/api-axios";
 
 type Props = {
   user ?: ProfileType
 }
 
+type FormData = {
+  username: string;
+  email: string;
+  age?: string;
+  avatar?: string;
+  address?: string;
+  codeId?: string; // so cccd
+  phone?: string;
+}
+
 export default function UserMetaCard({user}: Props) {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
+
+  const [form, setForm] = useState<FormData>({
+      email: "",
+      username: "",
+      age: "",
+      avatar: "",
+      address: "",
+      codeId: "",
+      phone: ""
+    });
+
+    useEffect(()=>{
+      if(user != undefined && user!= null){
+        setForm({
+          email: user.email,
+          username: user.username,
+          age: user?.age,
+          avatar: user?.avatar,
+          address: user?.address,
+          codeId: user?.codeId,
+          phone:user?.phone
+        })
+      }
+    },[user])
+
+    
+
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+       
+      }, []);
+  const handleSave = async () => {
+    try {
+        if(form.username != undefined){
+          await updateProfile(form);
+        }
+    } catch (error) {
+        console.log(error)
+    }
     closeModal();
   };
+
+
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-              <img src="/images/user/owner.jpg" alt="user" />
+              <img src={user?.avatar} alt="user" />
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
@@ -82,31 +136,41 @@ export default function UserMetaCard({user}: Props) {
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div className="col-span-2">
-                    <UploadAvatar />
+                    <UploadAvatar imageUrl={user?.avatar} handleChange={(url)=>{
+                      setForm({...form,
+                        avatar: url
+                      })
+                    }}/>
                 </div>
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Username</Label>
-                    <Input type="text" name="username" value="Musharof" />
+                    <Input type="text"  name="username"  onChange={handleChange} value={form.username}/>
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Age</Label>
-                    <Input type="text" name="age" value="30" />
+                    <Input type="text" name="age" value={form.age}  onChange={handleChange}  />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Address</Label>
-                    <Input type="text" disabled name="adress" value="randomuser@pimjo.com" />
+                    <Label>email</Label>
+                    <Input type="text" disabled name="email" value={form.email}  onChange={handleChange} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Phone</Label>
-                    <Input type="text" name="phone" value="+09 363 398 46" />
+                    <Input type="text" name="phone" value={form.phone}  onChange={handleChange} />
                   </div>
 
-                  <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" value="Team Manager" />
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Address</Label>
+                    <Input type="text" name="address" value={form.address}  onChange={handleChange} />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Code Id</Label>
+                    <Input type="text" name="codeId" value={form.codeId}  onChange={handleChange} />
                   </div>
                 </div>
               </div>

@@ -2,22 +2,38 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { uploadFile } from '../../../utils/api-axios';
+
+type Props = {
+    handleChange: (imageUrl : string) => void;
+    imageUrl: string | undefined
+}
 
 
-
-const UploadAvatar: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+const UploadAvatar: React.FC<Props> = ({handleChange,imageUrl}) => {
+  const [previewUrl, setPreviewUrl] = useState<string>(imageUrl || "");
+  console.log(imageUrl)
   const [uploading, setUploading] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop =  useCallback(async (acceptedFiles: File[]) => {
     const selected = acceptedFiles[0];
-    if (selected) {
-      setFile(selected);
-      const preview = URL.createObjectURL(selected);
-      setPreviewUrl(preview);
+    const formData = new FormData();
+    formData.append('image', selected); // name must match NestJS interceptor
+
+    try {
+        const res = await uploadFile(formData);
+        setPreviewUrl(res.data.path)
+        handleChange(res.data.path)
+    } catch (error) {
+        alert("Updload failed")
     }
   }, []);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.value;
+    handleChange(file)
+   
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -26,16 +42,6 @@ const UploadAvatar: React.FC = () => {
       'image/*': [],
     },
   });
-
-  const handleUpload = async () => {
-    
-  };
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
 
   return (
     <div className="flex flex-col items-center space-y-4">
@@ -47,13 +53,17 @@ const UploadAvatar: React.FC = () => {
           isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-400'
         }`}
       >
-        <input  {...getInputProps()} />
+        <input name='avatar' {...getInputProps()}  />
         {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt="Avatar Preview"
-            className="w-32 h-32 rounded-full object-cover"
-          />
+            <>
+                <img
+                    src={previewUrl}
+                    alt="Avatar Preview"
+                    className="w-32 h-32 rounded-full object-cover"
+                    />
+                    <input style={{ display:"none"}} type="hidden" name='avatar' value={previewUrl} onChange={handleFileChange} />
+            </>
+          
         ) : (
           <span className="text-gray-500 text-center text-sm px-2">
             Drag & drop or click to select an image
