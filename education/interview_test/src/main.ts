@@ -15,6 +15,11 @@ async function bootstrap() {
    app.useGlobalPipes(
     new ValidationPipe({}),
   );
+
+  app.enableCors({
+    origin: 'http://localhost:5173', // your React app URL
+    credentials: true, // if using cookies or auth headers
+  });
   const config = new DocumentBuilder()
     .setTitle('Course App')
     .setDescription('API documentation')
