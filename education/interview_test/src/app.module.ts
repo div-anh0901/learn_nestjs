@@ -6,9 +6,10 @@ import { MysqlDatabaseModule } from './shared/databases/mysql.database';
 import { CoursesModule } from './courses/courses.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ClassModule } from './classSchedule/class.module';
+import { UploadFileModule } from './upload-file/upload-file.module';
 
 @Module({
-  imports: [AuthModule, UsersModule ,CoursesModule, EnrollmentsModule, MongoDatabaseModule,MysqlDatabaseModule, ClassModule,],
+  imports: [AuthModule, UsersModule ,CoursesModule, EnrollmentsModule, MongoDatabaseModule,MysqlDatabaseModule, ClassModule, UploadFileModule,],
   controllers: [],
   providers: [],
 })

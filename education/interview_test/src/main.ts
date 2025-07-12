@@ -5,9 +5,11 @@ import { LoggingInterceptor } from './Interceptor/logging.interceptor';
 import { TransformInterceptor } from './Interceptor/transform.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './Interceptor/http-exception.filter';
-
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import * as fs from 'fs';
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalInterceptors(new LoggingInterceptor());
    // Global Interceptor
    app.useGlobalInterceptors(new TransformInterceptor());
@@ -15,6 +17,10 @@ async function bootstrap() {
    app.useGlobalPipes(
     new ValidationPipe({}),
   );
+  fs.mkdirSync('./uploads/avatars', { recursive: true, });
+  app.useStaticAssets(join(__dirname, '..', 'uploads'),{
+    prefix: '/uploads/',
+  });
 
   app.enableCors({
     origin: 'http://localhost:5173', // your React app URL
