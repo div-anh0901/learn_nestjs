@@ -3,8 +3,11 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-
-export default function UserInfoCard() {
+import { ProfileType } from "../../utils/type-request";
+type Props = {
+  user ?: ProfileType
+}
+export default function UserInfoCard({user}: Props) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here

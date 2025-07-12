@@ -35,6 +35,9 @@ export class User extends Document {
   @Prop({ select: true })
   createBy: string; 
 
+  @Prop({ select: true })
+  phone: string; 
+
   @Prop({ select: true, default: Date.now() })
   createdAt?: Date;
 

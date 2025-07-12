@@ -1,6 +1,6 @@
 // src/api/axios.ts
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { CreateUser, LoginType } from './type-request';
+import { CreateUser, LoginType, ProfileType } from './type-request';
 
 // Load base URL from .env
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -70,3 +70,9 @@ export const registerUser = async (data: CreateUser) => {
     const response = await api.post('/auth/login', data);
     return response.data;
   };
+
+
+export const getProfile =  async ()=>{
+    const response = await api.get('/users/me');
+    return response.data;
+}

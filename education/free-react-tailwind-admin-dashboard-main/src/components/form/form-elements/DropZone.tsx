@@ -1,10 +1,14 @@
+import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 // import Dropzone from "react-dropzone";
 
 const DropzoneComponent: React.FC = () => {
+  const [previews, setPreviews] = useState<string[]>([]);
+
   const onDrop = (acceptedFiles: File[]) => {
-    console.log("Files dropped:", acceptedFiles);
+    const imagePreviews = acceptedFiles.map(file => URL.createObjectURL(file));
+    setPreviews(imagePreviews);
     // Handle file uploads here
   };
 
@@ -17,6 +21,8 @@ const DropzoneComponent: React.FC = () => {
       "image/svg+xml": [],
     },
   });
+
+  console.log(console.log(1))
   return (
     <ComponentCard title="Dropzone">
       <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
@@ -69,6 +75,16 @@ const DropzoneComponent: React.FC = () => {
           </div>
         </form>
       </div>
+      {/* Preview Section */}
+      {previews.length > 0 && (
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {previews.map((url, index) => (
+            <div key={index} className="border rounded-lg overflow-hidden">
+              <img src={url} alt={`preview-${index}`} className="w-full h-auto" />
+            </div>
+          ))}
+        </div>
+      )}
     </ComponentCard>
   );
 };

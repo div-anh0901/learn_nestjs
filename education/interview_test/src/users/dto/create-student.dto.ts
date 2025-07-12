@@ -9,4 +9,5 @@ export class CreateStudentDto {
     codeId: string; // so cccd
     createBy: string;
     password ?:string;
+    phone ?: string; 
 }

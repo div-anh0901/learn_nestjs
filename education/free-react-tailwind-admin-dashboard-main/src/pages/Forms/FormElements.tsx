@@ -10,6 +10,7 @@ import SelectInputs from "../../components/form/form-elements/SelectInputs";
 import TextAreaInput from "../../components/form/form-elements/TextAreaInput";
 import InputStates from "../../components/form/form-elements/InputStates";
 import PageMeta from "../../components/common/PageMeta";
+import AvatarUpload from "../../components/form/form-elements/UploadAvatar";
 
 export default function FormElements() {
   return (
@@ -33,6 +34,7 @@ export default function FormElements() {
           <RadioButtons />
           <ToggleSwitch />
           <DropzoneComponent />
+          <AvatarUpload/>
         </div>
       </div>
     </div>
