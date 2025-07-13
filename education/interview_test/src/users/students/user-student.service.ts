@@ -99,14 +99,12 @@ export class UserStudentService implements IUserStudentService  {
     }
 
     async getAllStudent(pagi: PaginationQueryDto) {
-
-      var option = {
-        role:"student"
+      var option = {  
+        role: "student"
       }
         if(pagi != null){
           const { limit = pagi.limit, page = pagi.page } = pagi;
-          const skip = (page - 1) * limit;
-        
+          const skip = (page - 1)  * limit;
           const [res, total] = await Promise.all([
             this.userModel.find(option).skip(skip).limit(limit).exec(),
             this.userModel.countDocuments(option).exec(),

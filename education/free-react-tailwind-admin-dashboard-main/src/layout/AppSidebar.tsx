@@ -11,10 +11,12 @@ import {
   ListIcon,
   PageIcon,
   PieChartIcon,
-  PlugInIcon,
   TableIcon,
-  UserCircleIcon,
 } from "../icons";
+
+import { PiStudentDuotone } from "react-icons/pi";
+import { FaRegAddressBook } from "react-icons/fa";
+import { SiGoogleclassroom } from "react-icons/si";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
 
@@ -31,15 +33,26 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
+  
+  {
+    icon: <PiStudentDuotone />,
+    name: "Mangement Students",
+    path: "/management_students",
+  },
+  {
+    icon: <FaRegAddressBook />,
+    name: "Mangement Course",
+    path: "/management_coures",
+  },
+  {
+    icon: <SiGoogleclassroom />,
+    name: "Mangement classes",
+    path: "/management_classes",
+  },
   {
     icon: <CalenderIcon />,
     name: "Calendar",
     path: "/calendar",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
   },
   {
     name: "Forms",
@@ -82,14 +95,14 @@ const othersItems: NavItem[] = [
       { name: "Videos", path: "/videos", pro: false },
     ],
   },
-  {
+ /* {
     icon: <PlugInIcon />,
     name: "Authentication",
     subItems: [
       { name: "Sign In", path: "/signin", pro: false },
       { name: "Sign Up", path: "/signup", pro: false },
     ],
-  },
+  },*/
 ];
 
 const AppSidebar: React.FC = () => {

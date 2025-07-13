@@ -22,6 +22,7 @@ import { ProfileType } from "./utils/type-request";
 import { useState } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { AuthticationRoute } from "./components/AuthticationRoute";
+import ManageStudent from "./pages/ManagementStudents/ManageStudents";
 
 export default function App() {
 
@@ -38,8 +39,11 @@ export default function App() {
               <Route element={ <AuthticationRoute> <AppLayout /> </AuthticationRoute>  }>
                 <Route index path="/" element={<Home />} />
 
+                 {/* Tables */}
+                 <Route path="/management_students" element={<ManageStudent />} />
                 {/* Others Page */}
                 <Route path="/profile" element={<UserProfiles />} />
+                
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/blank" element={<Blank />} />
 
@@ -48,6 +52,9 @@ export default function App() {
 
                 {/* Tables */}
                 <Route path="/basic-tables" element={<BasicTables />} />
+
+
+
 
                 {/* Ui Elements */}
                 <Route path="/alerts" element={<Alerts />} />

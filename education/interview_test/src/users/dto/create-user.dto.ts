@@ -5,7 +5,6 @@ import { IsNotEmpty } from "class-validator";
 
 
 export class CreateUserDto {
-
     @ApiProperty({ type: [String] })
     @IsNotEmpty()
     username: string;
@@ -17,7 +16,6 @@ export class CreateUserDto {
     @ApiProperty({ type: [String] })
     @IsNotEmpty()
     password: string;
-
-    
+  
     role ?: string; 
   }

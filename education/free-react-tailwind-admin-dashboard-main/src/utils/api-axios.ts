@@ -1,6 +1,6 @@
 // src/api/axios.ts
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { CreateUser, LoginType, ProfileType, UpdateProfile } from './type-request';
+import { CreateUser, LoginType, Pagination, ProfileType, DataStudents, UpdateProfile, ApiResponse } from './type-request';
 
 // Load base URL from .env
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -89,4 +89,13 @@ export const uploadFile = async (file: any)=>{
     },
   });
   return response.data
+}
+
+
+export const getStudents = async(data: Pagination) : Promise<ApiResponse<DataStudents[]>> =>{
+  const response = await api.post('/students/getAlls',data);
+    return {
+      data: response.data.data,
+      meta: response.data.meta
+    };
 }

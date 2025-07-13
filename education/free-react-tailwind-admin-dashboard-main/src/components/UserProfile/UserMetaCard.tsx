@@ -22,6 +22,7 @@ type FormData = {
   phone?: string;
 }
 
+
 export default function UserMetaCard({user}: Props) {
   const { isOpen, openModal, closeModal } = useModal();
 
