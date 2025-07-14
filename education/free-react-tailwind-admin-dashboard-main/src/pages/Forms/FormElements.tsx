@@ -34,7 +34,6 @@ export default function FormElements() {
           <RadioButtons />
           <ToggleSwitch />
           <DropzoneComponent />
-          <AvatarUpload/>
         </div>
       </div>
     </div>

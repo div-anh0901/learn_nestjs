@@ -1,6 +1,6 @@
 // src/api/axios.ts
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { CreateUser, LoginType, Pagination, ProfileType, DataStudents, UpdateProfile, ApiResponse } from './type-request';
+import { CreateUser, LoginType, Pagination, ProfileType, DataStudents, UpdateProfile, ApiResponse, TypeSearchBody, CreateStudentDto, TypeDetailStudent } from './type-request';
 
 // Load base URL from .env
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -92,10 +92,34 @@ export const uploadFile = async (file: any)=>{
 }
 
 
-export const getStudents = async(data: Pagination) : Promise<ApiResponse<DataStudents[]>> =>{
+export const getStudents = async(data: TypeSearchBody) : Promise<ApiResponse<DataStudents[]>> =>{
   const response = await api.post('/students/getAlls',data);
     return {
       data: response.data.data,
       meta: response.data.meta
     };
+}
+
+
+export const createStudent = async(data: CreateStudentDto) =>{
+  const response = await api.post('/students',data);
+    return {
+      data: response.data.data,
+    };
+}
+
+export const findStudentById = async (id: string) : Promise<TypeDetailStudent>=>{
+  const response = await api.get('/students/getOne/' + id)
+  return response.data.data
+}
+
+
+export const updateStudentById = async (id: string, data: CreateStudentDto) =>{
+  const response = await api.put('/students/updateOne/' +id, data);
+  return response.data.data;
+}
+
+export const deleteStudentById = async (id: string) =>{
+  const response = await api.delete('/students/delete/' +id);
+  return response.data.data;
 }

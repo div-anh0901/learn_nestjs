@@ -58,10 +58,6 @@ export type DataStudents ={
     phone: string;
 }
 
-export type Pagination ={
-    page: number;
-    limit: number
-}
 
 export type ApiResponse<Data> ={
     data: Data,
@@ -70,4 +66,33 @@ export type ApiResponse<Data> ={
         page: number,
         total: number
     }
+}
+export interface Pagination {
+    page: number;
+    limit: number
+}
+
+
+export interface TypeSearchBody extends Pagination {
+    findText ?: string;
+}
+
+export interface IID  {
+    id: string
+}
+
+
+export interface CreateStudentDto {
+    username: string;
+    email: string;
+    age?: string;
+    address?: string;
+    codeId?: string; // so cccd
+    phone ?: string; 
+    gender : string;
+    birthday: string
+}
+
+export interface TypeDetailStudent extends IID, CreateStudentDto{
+    avatar: string;
 }

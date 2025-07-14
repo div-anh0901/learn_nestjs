@@ -102,9 +102,15 @@ export class UserStudentService implements IUserStudentService  {
       var option = {  
         role: "student"
       }
-        if(pagi != null){
-          const { limit = pagi.limit, page = pagi.page } = pagi;
+      if(pagi != null){
+          const { limit = pagi.limit, page = pagi.page , findText } = pagi;
           const skip = (page - 1)  * limit;
+          if(findText != undefined && findText != ''){
+            option["$or"] = [
+                { username: { $regex: findText, $options: 'i' } },
+                { email: { $regex: findText, $options: 'i' } },
+            ]
+          }
           const [res, total] = await Promise.all([
             this.userModel.find(option).skip(skip).limit(limit).exec(),
             this.userModel.countDocuments(option).exec(),
@@ -118,7 +124,14 @@ export class UserStudentService implements IUserStudentService  {
               total: total,
             }
           }
-        }else {
+      }else {
+          const { findText } = pagi;
+          if(findText != undefined && findText != ''){
+            option["$or"] = [
+                { username: { $regex: findText, $options: 'i' } },
+                { email: { $regex: findText, $options: 'i' } },
+            ]
+          }
           return await this.userModel.find(option).exec();
         }
     }

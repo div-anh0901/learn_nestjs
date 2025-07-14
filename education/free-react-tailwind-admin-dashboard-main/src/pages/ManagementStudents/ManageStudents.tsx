@@ -8,17 +8,20 @@ import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
 import { DataStudents } from '../../utils/type-request';
-import { getStudents } from '../../utils/api-axios';
-
+import { createStudent, getStudents } from '../../utils/api-axios';
+import DatePicker from '../../components/form/date-picker';
+import Select from '../../components/form/Select';
+import { toast } from 'react-toastify';
 
 type FormData = {
   username: string;
   email: string;
   age?: string;
-  avatar?: string;
   address?: string;
   codeId?: string; // so cccd
   phone?: string;
+  gender: string;
+  birthday: string;
 }
 
 
@@ -31,58 +34,113 @@ type Meta = {
 function ManageStudent() {
   
   const [data, setData] = useState<DataStudents[]>([]);
-  
   const [meta,setMeta] = useState<Meta>({
     limit: 15,
     page: 1,
     total: 15
   });
-  const [selectedClass, setSelectedClass] = useState('');
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [filters, setFilters] = useState<{
-    className: string;
-    ageMin: number | null;
-    ageMax: number | null;
-    status: string;
-  }>({ className: '', ageMin: null, ageMax: null, status: '' });
-
+  const [filter, setFilter] = useState<string>('');
+  const optionGender = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+  ];
   const { isOpen, openModal, closeModal } = useModal();
+  const [form, setForm] = useState<FormData>({
+    email: "",
+    username: "",
+    age: "",
+    address: "",
+    codeId: "",
+    phone: "",
+    gender:"",
+    birthday: ""
+  });
+
+ 
+  const fetchStudents = useCallback(()=>{
+    getStudents({limit: meta.limit, page : meta.page, findText:filter}).then(res => {
+      setMeta((prev) => ({
+        ...prev,
+        total: res.meta.total, // Only update `total` to avoid resetting `limit/page`
+      }));
+      setData(res.data)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  },[meta.page, meta.limit, filter])
+
+
+  const resetPage = ()=>{
+    fetchStudents()
+  }
+
   useEffect(()=>{
-      getStudents({limit: meta.limit, page : meta.page}).then(res => {
-        setMeta((prev) => ({
-          ...prev,
-          total: res.meta.total, // Only update `total` to avoid resetting `limit/page`
-        }));
-        setData(res.data)
-      }).catch((err)=>{
-        console.log(err)
-      })
-  },[meta.page, meta.limit])
+    fetchStudents()
+  },[fetchStudents])
 
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }, []);
 
-  
- const [form, setForm] = useState<FormData>({
-      email: "",
-      username: "",
-      age: "",
-      avatar: "",
-      address: "",
-      codeId: "",
-      phone: ""
-    });
- const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-       
-      }, []);
+  const validateForm = (value: FormData , callback: () => void) => {
+    let hasError = false;
+    const showError = (message: string) => {
+      hasError = true;
+      toast.error(message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+    };
+    const isValidEmail =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value.email);
 
-       const handleSave = async () => {
+      if (isValidEmail) showError("Email be wrong or not be empty!");
+      if (value.username == "") showError("Username must not be empty!");
+      if (value.age == "") showError("Age must not be empty!");
+      if (value.birthday =="") showError("Birthday must not be empty!");
+      if (value.codeId == "") showError("Code ID must not be empty!");
+      if (value.address == "") showError("Address must not be empty!");
+      if (value.phone=="") showError("Phone must not be empty!");
+    if(!hasError){
 
-          closeModal();
-        };
+      callback()
+    }else{
+      return
+    }
+    
+  };
+  const handleSave = async () => {
+    validateForm(form, 
+      async () => {
+        try {
+          await createStudent(form);      // Create student
+          await fetchStudents();          // Refresh list
+          closeModal();                   // Close only on success
+          toast.success('Add student success!', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
+        } catch (err) {
+          console.error('Create student failed:', err);
+        }
+      }
+    )
+  };
       
  /* const filteredData = data.filter((student) => {
     const matchClass =
@@ -115,11 +173,18 @@ function ManageStudent() {
         selectedClass={selectedClass}
         onChange={setSelectedClass}
       />*/}
-          <StudentTable  data={data} meta={meta} setMeta={setMeta}
+          <StudentTable  
+            data={data} 
+            meta={meta} 
+            setMeta={setMeta} 
+            filter={filter}
+            setFilter={setFilter}
+            resetPage={resetPage}
+            
         onCreate={openModal} />
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[1300px] m-4">
+        <div className="no-scrollbar relative w-full max-w-[1300px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Create Student Information
@@ -137,13 +202,46 @@ function ManageStudent() {
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Age</Label>
-                    <Input type="text" name="age" value={form.age}  onChange={handleChange}  />
+                    <Label>Gender</Label>
+                    <Select
+                      options={optionGender}
+                      placeholder="Select an Gender"
+                      onChange={(value) => setForm({...form, gender: value})}
+                      
+                      className="dark:bg-dark-900"
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>email</Label>
-                    <Input type="text" disabled name="email" value={form.email}  onChange={handleChange} />
+                    <DatePicker
+                      id="date-picker"
+                      label="Brithday"
+                      placeholder="Select a date"
+                      onChange={(dates, currentDateString) => {
+                        // Handle your logic
+                        setForm({...form, birthday: currentDateString})
+                      }}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Age</Label>
+                    <Input 
+                      type="text" 
+                      name="age" 
+                      value={form.age}  
+                      onChange={handleChange}  
+                      />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Email</Label>
+                    <Input 
+                      type="text" 
+                      name="email" 
+                      value={form.email}  
+                      onChange={handleChange}
+                      />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
@@ -161,6 +259,11 @@ function ManageStudent() {
                     <Label>Code Id</Label>
                     <Input type="text" name="codeId" value={form.codeId}  onChange={handleChange} />
                   </div>
+
+
+                 
+
+                  
                 </div>
               </div>
             </div>
@@ -168,7 +271,7 @@ function ManageStudent() {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
+              <Button size="sm" type="button" onClick={handleSave}>
                 Save Changes
               </Button>
             </div>

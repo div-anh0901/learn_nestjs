@@ -50,6 +50,12 @@ export class User extends Document {
   @Prop({ select: true , default: true})
   status ?: boolean; 
 
+  @Prop({ select: true , default: true})
+  gender ?: string; 
+
+  @Prop({ select: true , default: true})
+  birthday ?: string; 
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

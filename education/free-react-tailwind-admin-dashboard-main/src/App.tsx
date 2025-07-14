@@ -23,17 +23,16 @@ import { useState } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { AuthticationRoute } from "./components/AuthticationRoute";
 import ManageStudent from "./pages/ManagementStudents/ManageStudents";
-
+import { ToastContainer,toast } from 'react-toastify';
 export default function App() {
-
   const [user, setUser] = useState<ProfileType>();
-  
-
   return (
     <>
       <AuthContext.Provider value={{user, updateAuthUser: setUser}}>
         <Router>
+        
             <ScrollToTop />
+            <ToastContainer  style={{ zIndex: 999999 }}/>
             <Routes>
               {/* Dashboard Layout */}
               <Route element={ <AuthticationRoute> <AppLayout /> </AuthticationRoute>  }>
@@ -79,9 +78,9 @@ export default function App() {
            
         </Router>
 
-
+        
       </AuthContext.Provider>
-     
+      
     </>
   );
 }

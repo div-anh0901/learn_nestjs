@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
 // users/dto/update-user.dto.ts
@@ -11,4 +12,11 @@ export class UpdateUserDto {
     address: string;
     codeId: string; // so cccd
     phone: string;
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    gender ?: string; 
+
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    birthday ?: string; 
 }

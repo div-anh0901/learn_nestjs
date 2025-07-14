@@ -3,9 +3,13 @@ export class ResponseBoolean{
     success :boolean
 }
 
-export class TypePanigation{
+export interface TypePanigation{
     page: number;
     limit: number
+}
+
+export interface TypeSearchBody extends TypePanigation {
+    findText ?: string;
 }
 
 export class TypeMeta {
@@ -18,7 +22,7 @@ export class TypeMeta {
 import { Type } from 'class-transformer';
 import { IsOptional, IsPositive, Min } from 'class-validator';
 
-export class PaginationQueryDto {
+export class PaginationQueryDto implements TypeSearchBody {
   @IsOptional()
   @Type(() => Number)
   @IsPositive()
@@ -28,4 +32,7 @@ export class PaginationQueryDto {
   @Type(() => Number)
   @Min(0)
   page: number;
+
+  @IsOptional()
+  findText?: string | undefined;
 }
