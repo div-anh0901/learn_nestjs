@@ -87,6 +87,11 @@ export class UserStudentController {
         }
     }
 
+    @Post("exportExcel")
+    async exportExcel(){
+       return this.userService.exportExcel()
+    }
+
     @Post("addStudentToCourse")
     async addStudentToCourse(@Body() data: AddStudentToCourse){
         try {
@@ -122,7 +127,6 @@ export class UserStudentController {
         },
     })
     async addStudentToCourses(@Body() data: AddStudentToCourseMulti){
-       
         try {
             const rs = await this.userService.addStudentInCourseMutil(data)
             return rs

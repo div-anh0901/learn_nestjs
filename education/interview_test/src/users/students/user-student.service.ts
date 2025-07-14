@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException, NotImplementedException } from "@nestjs/common";
 import { CreateStudentDto } from "../dto/create-student.dto";
-import { IUserStudentService } from "./user-student";
+import { IUserStudentService, Student } from "./user-student";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from "../schemas/user.schema";
 import { Model } from "mongoose";
@@ -13,7 +13,9 @@ import { Repository } from "typeorm";
 import { Array_student } from "src/shared/entities/array_student.entity";
 import { AddStudentToCourse, AddStudentToCourseMulti } from "../dto/student-and-course.dto";
 import { faker } from '@faker-js/faker';
-import { CreateCourseDto } from "src/courses/dto/create-course.dto";
+import * as ExcelJS from 'exceljs';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class UserStudentService implements IUserStudentService  {
@@ -217,6 +219,39 @@ export class UserStudentService implements IUserStudentService  {
 
     async getStudentByIDMutil(param: string[]) {
       return await this.userModel.find({"_id" : {$in: param}}).select("-passowrd")
+    }
+
+    async exportExcel() {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Students');
+      worksheet.columns = [
+        { header: 'ID', key: '_id', width: 40, },
+        { header: 'Name', key: 'username', width: 30 },
+        { header: 'Email', key: 'email', width: 30 },
+        { header: 'Phone', key: 'phone', width: 30 },
+        { header: 'Address', key: 'address', width: 50 },
+        { header: 'CodeId', key: 'codeId', width: 30 },
+        { header: 'Gender', key: 'gender', width: 30 },
+        { header: 'Birthday', key: 'birthday', width: 20 },
+      ];
+      var arrResult= await this.userModel.find().lean();
+
+      for(var i = 0 ; i < arrResult.length;i++){
+        worksheet.addRow(arrResult[i]);
+      }
+      
+      const filename = `export-${Date.now()}.xlsx`;
+    const exportDir = path.join(__dirname, '../../exports');
+
+    // Ensure directory exists
+    if (!fs.existsSync(exportDir)) {
+      fs.mkdirSync(exportDir, { recursive: true });
+    }
+
+    const filepath = path.join(exportDir, filename);
+    await workbook.xlsx.writeFile(filepath);
+
+    return filepath;
     }
 }
 
