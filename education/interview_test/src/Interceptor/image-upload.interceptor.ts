@@ -31,3 +31,21 @@ export function ImageUploadInterceptor(fieldName = 'image') {
     ),
   );
 }
+
+export const excelFileInterceptor = () =>
+  FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads/excels',
+      filename: (req, file, callback) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        callback(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+      },
+    }),
+    fileFilter: (req, file, callback) => {
+      if (!file.originalname.match(/\.(xlsx)$/)) {
+        return callback(new Error('Only .xlsx files are allowed!'), false);
+      }
+      callback(null, true);
+    },
+  });

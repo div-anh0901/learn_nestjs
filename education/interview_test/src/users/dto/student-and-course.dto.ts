@@ -18,3 +18,18 @@ export class AddStudentToCourseMulti{
 
 
 
+export interface ImportExcelStudent{
+    username: string;
+    email: string;
+    age: string;
+    address: string;
+    role?: string;
+    codeId: string; // so cccd
+    createBy: string;
+    password ?:string;
+    phone ?: string;
+    gender ?: string;
+    birthday ?: string; 
+}
+
+

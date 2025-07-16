@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post,Put,Query,Request, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Post,Put,Query,Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { IUserStudentService } from "./user-student";
 import { CreateStudentDto } from "../dto/create-student.dto";
 import { Roles } from "src/auth/role.decorator";
@@ -8,9 +8,10 @@ import { ChangePasswordStudent } from "../dto/change-password-student.dto";
 import { UpdateCourseDto } from "src/courses/dto/update-course.dto";
 import { UpdateStudentDto } from "../dto/update-student.dto";
 import { PaginationQueryDto } from "src/utils/TypeGlobal";
-import { AddStudentToCourse, AddStudentToCourseMulti } from "../dto/student-and-course.dto";
+import { AddStudentToCourse, AddStudentToCourseMulti, ImportExcelStudent } from "../dto/student-and-course.dto";
 import { ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
-
+import * as ExcelJS from 'exceljs';
+import { excelFileInterceptor } from "src/Interceptor/image-upload.interceptor";
 
 @Controller("students")
 @UseGuards(JwtAuthGuard)
@@ -92,6 +93,63 @@ export class UserStudentController {
        return this.userService.exportExcel()
     }
 
+    @Post("importExcel")
+    @UseInterceptors(excelFileInterceptor())
+    async importExcel(@Request() req,@UploadedFile() file: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('No file uploaded');
+          }
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(file.path);
+        const worksheet = workbook.getWorksheet(1); // or worksheet by name
+        if (!worksheet) {
+            throw new BadRequestException('Invalid Excel file: No worksheet found');
+          }
+        const students: ImportExcelStudent[] = [];
+       
+
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return;
+          
+            const [
+              ,
+              username,
+              email,
+              phone,
+              address,
+              codeId,
+              gender,
+              birthday,
+              age,
+              avatar,
+              createBy,
+            ] = row.values as any[];
+          
+            if (username && email) {
+              students.push({
+                username: String(username),
+                email: String(email),
+                phone: String(phone || ''),
+                address: String(address || ''),
+                role: "student",
+                codeId: req.user.userId,
+                gender: String(gender || ''),
+                birthday: birthday instanceof Date
+                  ? birthday.toISOString()
+                  : String(birthday || ''),
+                age: String(age || "0"),
+                createBy: String(createBy || ''),
+              });
+            }
+          });
+
+       
+    
+        //await this.userService.bulkCreateStudents(students);
+    
+        return { message: 'Students imported successfully', count: students.length };
+      }
+    
     @Post("addStudentToCourse")
     async addStudentToCourse(@Body() data: AddStudentToCourse){
         try {
