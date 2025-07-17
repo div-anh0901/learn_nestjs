@@ -8,7 +8,6 @@ function binarySearch(arr: number[], target: number): number{
         else if(arr[mid] < target) left = mid  + 1;
         else right = mid -1;
     }
-
     return -1;
 }
 
