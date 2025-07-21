@@ -145,23 +145,138 @@ type Job = {
     deadline: number;
 }
 
-function SchedulingDeadline(jobs: Job[]): Job[]{
 
-    const result: Job[] = []
-    jobs.sort((a , b) => b.profit - a.profit);
+
+function jobScheduling(jobs: Job[]): string[] {
+    jobs.sort((a, b) => b.profit - a.profit);
     const maxDeadline = Math.max(...jobs.map(job => job.deadline));
-
     const slots: (string | null)[] = new Array(maxDeadline).fill(null);
+    for (const job of jobs) {
+      for (let i = job.deadline - 1; i >= 0; i--) {
+        if (!slots[i]) {
+            console.log(job)
+          slots[i] = job.id;
+          break;
+        }
+      }
+    }
+  
+    return slots.filter(Boolean) as string[];
+  }
 
-    for(const job of jobs){
+/*const jobs: Job[] = [
+    { id: 'a', profit: 100, deadline: 2 },
+    { id: 'b', profit: 19, deadline: 1 },
+    { id: 'c', profit: 27, deadline: 2 },
+    { id: 'd', profit: 25, deadline: 4 },
+    { id: 'e', profit: 15, deadline: 6 },
+  ];
+  
+  console.log("Selected jobs:", jobScheduling(jobs)); */
 
 
+  /**
+   
+        Huffman Encoding xây dựng một cây nhị phân sao cho:
+        Ký tự có tần suất cao sẽ có mã nhị phân ngắn hơn.
+        Ký tự ít xuất hiện sẽ có mã nhị phân dài hơn.
+        Tổng độ dài mã hóa toàn bộ dữ liệu là nhỏ nhất có thể.
+   */
 
+type HuffmanNode = {
+    char?: string; // Nếu là nút lá
+    freq: number;
+    left?: HuffmanNode;
+    right?: HuffmanNode;
+};
+
+// Tạo cây Huffman
+function buildHuffmanTree(text: string): HuffmanNode {
+    const freqMap = new Map<string, number>();
+
+    // Bước 1: Đếm tần suất
+    for (const char of text) {
+        freqMap.set(char, (freqMap.get(char) || 0) + 1);
     }
 
-    return result;
+    // Bước 2: Tạo danh sách các node
+    let nodes: HuffmanNode[] = Array.from(freqMap.entries()).map(([char, freq]) => ({
+        char,
+        freq,
+    }));
+
+    // Bước 3: Xây cây Huffman bằng Greedy
+    while (nodes.length > 1) {
+        // Sắp xếp tăng dần theo freq
+        nodes.sort((a, b) => a.freq - b.freq);
+
+        const left = nodes.shift()!;
+        const right = nodes.shift()!;
+
+        const merged: HuffmanNode = {
+        freq: left.freq + right.freq,
+        left,
+        right,
+        };
+
+        nodes.push(merged);
+    }
+
+    return nodes[0]; // Trả về gốc cây
+}
+function generateCodes(node: HuffmanNode, path = "", map = new Map<string, string>()): Map<string, string> {
+    if (!node.left && !node.right && node.char) {
+        map.set(node.char, path);
+    }
+
+    if (node.left) generateCodes(node.left, path + "0", map);
+    if (node.right) generateCodes(node.right, path + "1", map);
+
+    return map;
 }
 
 
+// Mã hóa chuỗi
+function encode(text: string): { encoded: string; codes: Map<string, string>; tree: HuffmanNode } {
+    const tree = buildHuffmanTree(text);
+    const codes = generateCodes(tree);
+  
+    const encoded = text.split("").map(char => codes.get(char)).join("");
+  
+    return { encoded, codes, tree };
+  }
+//decode
+  function decode(encoded: string, tree: HuffmanNode): string {
+    let result = "";
+    let current = tree;
+  
+    for (const bit of encoded) {
+      if (bit === "0") {
+        current = current.left!;
+      } else {
+        current = current.right!;
+      }
+  
+      // Nếu tới nút lá, lấy ký tự
+      if (!current.left && !current.right && current.char) {
+        result += current.char;
+        current = tree; // Quay lại gốc để đọc tiếp
+      }
+    }
+  
+    return result;
+  }
+// Thử nghiệm
+const input = "hoanganh0901";
+const result = encode(input);
 
+console.log("Ký tự -> Mã hóa:");
+for (const [char, code] of result.codes.entries()) {
+  console.log(`${char} -> ${code}`);
+}
 
+console.log("\nChuỗi gốc:", input);
+console.log("Mã hóa Huffman:", result.encoded);  
+
+const decoded = decode(result.encoded, result.tree);
+console.log("\nGiải mã:", decoded);
