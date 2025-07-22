@@ -267,6 +267,7 @@ function encode(text: string): { encoded: string; codes: Map<string, string>; tr
     return result;
   }
 // Thử nghiệm
+/*
 const input = "hoanganh0901";
 const result = encode(input);
 
@@ -280,3 +281,64 @@ console.log("Mã hóa Huffman:", result.encoded);
 
 const decoded = decode(result.encoded, result.tree);
 console.log("\nGiải mã:", decoded);
+*/
+
+
+
+
+
+/*
+
+    Tại một ga tàu, có nhiều chuyến tàu đến và rời đi vào các thời điểm khác nhau.
+    Mỗi tàu cần một platform (sân đỗ) riêng để tránh va chạm.
+
+    Câu hỏi:
+    Tính số platform tối thiểu cần thiết tại ga để không có hai chuyến tàu nào đến và rời cùng lúc.
+*/
+
+
+function findMinimumPlatforms(arrival: number[],departure: number[]): number{
+    const n = arrival.length;
+
+
+    //Sắp xếp thòi gian đếm;
+    arrival.sort((a, b) => a - b);
+    departure.sort((a,b)=> a - b);
+
+    let platformsNeeded = 0;
+    let maxPlatforms = 0;
+
+    let i =0; // con tro den
+    let j = 0; // con tro di
+
+
+    //duyen tung su kien den va di
+    while(i < n && j < n){
+        if(arrival[i] < departure[j]){
+            platformsNeeded++;
+            if(maxPlatforms <= platformsNeeded)
+            {
+                maxPlatforms = platformsNeeded
+
+            }
+            console.log("platforms: " + maxPlatforms)
+            i++
+        }else {
+            platformsNeeded--;
+            j++
+        }
+    }
+
+    return maxPlatforms;
+}
+
+
+// vi du;
+const arrival = [900, 910, 930, 1000, 1020, 1040, 1050, 1060, 1070];
+const departure = [940, 950, 1010, 1030, 1100, 1110, 1110,1110, 1110];
+
+const result = findMinimumPlatforms(arrival, departure);
+console.log("Số sân ga tối thiểu cần thiết:", result); // Kết quả: 3
+
+console.log(Math.max(5, 1))
+
