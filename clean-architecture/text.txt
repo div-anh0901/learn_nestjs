@@ -1,0 +1,109 @@
+src/
+└── user/
+    ├── domain/
+    │   ├── user.entity.ts
+    │   └── user.repository.interface.ts
+    ├── use-cases/
+    │   ├── create-user.use-case.ts
+    │   └── get-user.use-case.ts
+    ├── infra/
+    │   └── user.repository.impl.ts
+    ├── controllers/
+    │   └── user.controller.ts
+    └── user.module.ts
+
+    // create-user.use-case
+
+    import { Injectable, Inject } from '@nestjs/common';
+import { IUserRepository } from '../domain/user.repository.interface';
+import { User } from '../domain/user.entity';
+
+@Injectable()
+export class CreateUserUseCase {
+  constructor(
+    @Inject('UserRepository') private readonly userRepo: IUserRepository,
+  ) {}
+
+  execute(data: Partial<User>): Promise<User> {
+    return this.userRepo.create(data);
+  }
+}
+
+
+// user.controller 
+import { Controller, Post, Body, Get, Param, Inject } from '@nestjs/common';
+import { CreateUserUseCase } from './use-cases/create-user.use-case';
+import { GetUserUseCase } from './use-cases/get-user.use-case';
+import { User } from './domain/user.entity';
+
+@Controller('users')
+export class UserController {
+  constructor(
+    private readonly createUser: CreateUserUseCase,
+    private readonly getUser: GetUserUseCase,
+  ) {}
+
+  @Post()
+  async create(@Body() body: Partial<User>) {
+    return this.createUser.execute(body);
+  }
+
+  @Get()
+  async findAll() {
+    return this.getUser.findAll();
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: number) {
+    return this.getUser.findById(id);
+  }
+}
+
+
+///GetUserUseCase
+import { Injectable, Inject } from '@nestjs/common';
+import { IUserRepository } from '../domain/user.repository.interface';
+import { User } from '../domain/user.entity';
+
+@Injectable()
+export class GetUserUseCase {
+  constructor(
+    @Inject('UserRepository') private readonly userRepo: IUserRepository,
+  ) {}
+
+  findAll(): Promise<User[]> {
+    return this.userRepo.findAll();
+  }
+
+  findById(id: number): Promise<User | null> {
+    return this.userRepo.findById(id);
+  }
+}
+
+
+///UserRepositoryImpl
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../domain/user.entity';
+import { IUserRepository } from '../domain/user.repository.interface';
+
+@Injectable()
+export class UserRepositoryImpl implements IUserRepository {
+  constructor(
+    @InjectRepository(User) private readonly repo: Repository<User>,
+  ) {}
+
+  async create(data: Partial<User>): Promise<User> {
+    const user = this.repo.create(data);
+    return this.repo.save(user);
+  }
+
+  async findById(id: number): Promise<User | null> {
+    return this.repo.findOneBy({ id });
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.repo.find();
+  }
+}

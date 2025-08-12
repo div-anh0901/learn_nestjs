@@ -1,6 +1,6 @@
 // src/api/axios.ts
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { CreateUser, LoginType, Pagination, ProfileType, DataStudents, UpdateProfile, ApiResponse, TypeSearchBody, CreateStudentDto, TypeDetailStudent } from './type-request';
+import { CreateUser, LoginType, Pagination, ProfileType, DataStudents, UpdateProfile, ApiResponse, TypeSearchBody, CreateStudentDto, TypeDetailStudent, DataTeacher, FecthDataCourse, CreateCourse } from './type-request';
 
 // Load base URL from .env
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -123,3 +123,61 @@ export const deleteStudentById = async (id: string) =>{
   const response = await api.delete('/students/delete/' +id);
   return response.data.data;
 }
+
+//start Teacher
+
+
+export const getTeachers = async(data: TypeSearchBody) : Promise<ApiResponse<DataTeacher[]>> =>{
+  const response = await api.post('/teachers',data);
+    return {
+      data: response.data.data,
+      meta: response.data.meta
+    };
+}
+
+
+export const createTeacher = async(data: CreateStudentDto) =>{
+  const response = await api.post('/teachers/create',data);
+    return {
+      data: response.data.data,
+    };
+}
+
+export const findTeacherById = async (id: string) : Promise<TypeDetailStudent>=>{
+  const response = await api.get('/teachers/' + id)
+  return response.data.data
+}
+
+
+export const updateTeacherById = async (id: string, data: CreateStudentDto) =>{
+  const response = await api.put('/teachers/update/' +id, data);
+  return response.data.data;
+}
+
+export const deleteTeacherById = async (id: string) =>{
+  const response = await api.delete('/teachers/delete/' +id);
+  return response.data.data;
+}
+
+// end Teacher
+
+//start Course
+
+export const getALLCourses =  async(data: TypeSearchBody): Promise<ApiResponse<FecthDataCourse[]>> =>{
+  const response = await api.post('/courses',data);
+  return {
+    data: response.data.data,
+    meta: response.data.meta
+  };
+}
+
+
+export const createCourse = async (data: CreateCourse)=>{
+  const response = await api.post('/courses/create',data);
+  return {
+    data: response.data.data,
+  };
+
+}
+
+//enad Course

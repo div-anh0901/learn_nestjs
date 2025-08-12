@@ -24,22 +24,26 @@ import { AuthContext } from "./context/AuthContext";
 import { AuthticationRoute } from "./components/AuthticationRoute";
 import ManageStudent from "./pages/ManagementStudents/ManageStudents";
 import { ToastContainer } from 'react-toastify';
+import ManagementCourses from "./pages/ManagementCourses/ManageCourses";
+import ManageTeacher from "./pages/ManagementTeachers/ManagementTeachers";
 export default function App() {
   const [user, setUser] = useState<ProfileType>();
   return (
     <>
       <AuthContext.Provider value={{user, updateAuthUser: setUser}}>
         <Router>
-        
             <ScrollToTop />
             <ToastContainer  style={{ zIndex: 999999 }}/>
             <Routes>
               {/* Dashboard Layout */}
               <Route element={ <AuthticationRoute> <AppLayout /> </AuthticationRoute>  }>
                 <Route index path="/" element={<Home />} />
-
+                {/* Tables */}
+                <Route path="/management_teachers" element={<ManageTeacher />} />
                  {/* Tables */}
                  <Route path="/management_students" element={<ManageStudent />} />
+                 {/* Tables */}
+                 <Route path="/management_courses" element={<ManagementCourses />} />
                 {/* Others Page */}
                 <Route path="/profile" element={<UserProfiles />} />
                 

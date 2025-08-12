@@ -10,18 +10,19 @@ export class CreateCourseDto {
     @ApiProperty({ type: String })
     title: string;
 
-    @ApiProperty({ type: String })
-    time: string;
+    @ApiProperty({ type: Number })
+    time: number;
 
     @ApiProperty({ type: String })
     description: string;
 
     @ApiProperty({ type: String })
-    createdBy: string;// id nguoi tao
+    @IsNotEmpty()
+    teacher: string; // id co giao chu nhiem
 
     @ApiProperty({ type: String })
     @IsNotEmpty()
-    teacher: string; // id co giao chu nhiem
+    subject: string;
   }
 
 
@@ -32,4 +33,5 @@ export class CreateCourseDto {
     description: string;
     createdBy: string;
     teacher: string;
+    subject: string;
   }

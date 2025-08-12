@@ -56,6 +56,8 @@ export class User extends Document {
   @Prop({ select: true , default: true})
   birthday ?: string; 
 
+  @Prop({ select: true , default: false})
+  isDeleted : boolean; 
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
