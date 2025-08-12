@@ -125,16 +125,7 @@ function ManageStudent() {
           await createStudent(form);      // Create student
           await fetchStudents();          // Refresh list
           closeModal();                   // Close only on success
-          toast.success('Add student success!', {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            });
+        
         } catch (err) {
           console.error('Create student failed:', err);
         }

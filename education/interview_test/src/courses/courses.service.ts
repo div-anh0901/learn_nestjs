@@ -10,10 +10,12 @@ import { Role } from 'src/users/schemas/user.schema';
 import { Array_student } from 'src/shared/entities/array_student.entity';
 import { IUserStudentService } from 'src/users/students/user-student';
 import { UsersService } from 'src/users/user.service';
+import { ICoursesSerivce } from './courses';
+import { PaginationQueryDto } from 'src/utils/TypeGlobal';
 
 @Injectable()
 
-export class CoursesService {
+export class CoursesService implements ICoursesSerivce{
   constructor(
     @InjectRepository(Course)
     private courseRepo: Repository<Course>,
@@ -28,28 +30,38 @@ export class CoursesService {
     return this.courseRepo.save({ ...dto, createdBy: userId });
   }
 
-  async update(id: number, dto: UpdateCourseDto, userId: string) {
+  async update(id: string, dto: UpdateCourseDto, userId: string) {
     const course = await this.courseRepo.findOneBy({ id });
     if (!course) throw new NotFoundException();
     if (course.createdBy !== userId) throw new ForbiddenException();
     return this.courseRepo.save({ ...course, ...dto });
   }
 
-  async delete(id: number, userId: string) {
+  async delete(id: string, userId: string) {
     const course = await this.courseRepo.findOneBy({ id });
     if (!course || course.createdBy !== userId) throw new ForbiddenException();
 
     return this.courseRepo.delete(id);
   }
+  
 
-  findAll(page: number, limit: number) {
-    return this.courseRepo.find({
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+ async findAll(query: PaginationQueryDto) {
+  const rs = await this.courseRepo.find({
+    skip: (query.page - 1) * query.limit,
+    take: query.limit,
+  });
+
+  const count = await this.courseRepo.count({});
+  return  {
+    data: rs,
+    meta: {
+      limit: query.limit,
+      page: query.page,
+      total: count
+    }
   }
-
-  async findOne(id: number) {
+ }
+  async findOne(id: string) {
    // const course = await this.courseRepo.findOne({ where: {id: id}, relations:["array_student"]});
 
     const course =  await this.courseRepo

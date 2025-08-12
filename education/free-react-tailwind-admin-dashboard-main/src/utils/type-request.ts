@@ -58,6 +58,22 @@ export type DataStudents ={
     phone: string;
 }
 
+export type DataTeacher ={
+    _id : string;
+    username: string;
+    email : string;
+    age : string;
+    avatar : string;
+    address ?: string;
+    role ?: string;
+    codeId ?: string; // so cccd
+    createBy ?: string;
+    password ?:string;
+    isActived?: boolean;
+    status?: boolean;
+    phone: string;
+}
+
 
 export type ApiResponse<Data> ={
     data: Data,
@@ -96,3 +112,27 @@ export interface CreateStudentDto {
 export interface TypeDetailStudent extends IID, CreateStudentDto{
     avatar: string;
 }
+
+
+export interface FecthDataCourse {
+    id: string;
+    name: string;
+    title: string;
+    time: number;
+    description: string;
+    createdBy: string;
+    teacher: string;
+    subject: string;
+}
+
+export interface CreateCourse {
+    name: string;
+    title: string;
+    time: number;
+    description: string;
+    teacher: string;
+    subject: string;
+}
+
+
+

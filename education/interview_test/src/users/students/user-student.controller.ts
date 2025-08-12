@@ -25,7 +25,7 @@ export class UserStudentController {
     async createUser(@Request() req,@Body() student : CreateStudentDto){
         student.createBy = req.user.userId;
         student.role = "student";
-        const data = await this.userService.createStudent(student);
+        const data = await this.userService.create(student);
         return {
             message: "Add student success",
             data: data
@@ -46,10 +46,12 @@ export class UserStudentController {
     async updateUser(
         @Request() req,
         @Param('id') idstudent: string,
-        @Body() student : UpdateStudentDto)
+        @Body() student : UpdateStudentDto
+    
+    )
     {
         try {
-            await this.userService.updateUser(idstudent, student)
+            await this.userService.update(idstudent, student)
             return  true
         } catch (error) {
             return false
@@ -59,8 +61,15 @@ export class UserStudentController {
 
     @Post("getAlls")
     async getAlls(@Body() data: PaginationQueryDto){
+        var option = {
+            $or: [
+                { isDeleted: { $exists: false } }, // field does not exist
+                { isDeleted: false }               // field exists but value is false
+              ],
+            role: "student"
+        }
         try {
-           const rs = await this.userService.getAllStudent(data)
+           const rs = await this.userService.getAll(data,option)
             return  rs
         } catch (error) {
             return false
@@ -70,7 +79,7 @@ export class UserStudentController {
     @Get("getOne/:id")
     async getOne(@Param("id") id: string){
         try {
-           const rs = await this.userService.getOneStudent(id)
+           const rs = await this.userService.getOne(id)
             return  rs
         } catch (error) {
             return false
@@ -81,7 +90,7 @@ export class UserStudentController {
     @Delete("delete/:id")
     async Delete(@Param("id") id: string){
         try {
-           const rs = await this.userService.deleteStudent(id)
+           const rs = await this.userService.delete(id)
             return  rs
         } catch (error) {
             return false
@@ -102,13 +111,48 @@ export class UserStudentController {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(file.path);
         const worksheet = workbook.getWorksheet(1); // or worksheet by name
+
+        console.log(worksheet)
         if (!worksheet) {
             throw new BadRequestException('Invalid Excel file: No worksheet found');
           }
         const students: ImportExcelStudent[] = [];
+        worksheet.eachRow((row, rowNumber) => {
+            const [
+                ,
+                username,
+                email,
+                phone,
+                address,
+                codeId,
+                gender,
+                birthday,
+                age,
+                avatar,
+                createBy,
+              ] = row.values as any[];
+            
+              if (username && email) {
+                students.push({
+                  username: String(username),
+                  email: String(email),
+                  phone: String(phone || ''),
+                  address: String(address || ''),
+                  role: "student",
+                  codeId: req.user.userId,
+                  gender: String(gender || ''),
+                  birthday: birthday instanceof Date
+                    ? birthday.toISOString()
+                    : String(birthday || ''),
+                  age: String(age || "0"),
+                  createBy: String(createBy || ''),
+                });
+              }
+        })
+
        
 
-        worksheet.eachRow((row, rowNumber) => {
+/*worksheet.eachRow((row, rowNumber) => {
             if (rowNumber === 1) return;
           
             const [
@@ -142,12 +186,12 @@ export class UserStudentController {
               });
             }
           });
-
+*/
        
     
         //await this.userService.bulkCreateStudents(students);
     
-        return { message: 'Students imported successfully', count: students.length };
+        return { message: 'Students imported successfully', count: students.length, data:  students};
       }
     
     @Post("addStudentToCourse")

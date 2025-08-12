@@ -10,8 +10,8 @@ export class UpdateCourseDto {
     @ApiProperty({ type: String })
     title: string;
 
-    @ApiProperty({ type: String })
-    time: string;
+    @ApiProperty({ type: Number })
+    time: number;
 
     @ApiProperty({ type: String })
     description: string;
@@ -22,4 +22,8 @@ export class UpdateCourseDto {
     @ApiProperty({ type: String })
     @IsNotEmpty()
     teacher: string; // id co giao chu nhiem
+
+    @ApiProperty({ type: String })
+    @IsNotEmpty()
+    subject: string
   }

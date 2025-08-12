@@ -38,7 +38,7 @@ type Meta = {
 }
 const classOptions = ['Class A', 'Class B', 'Class C'];
 
-const DataTable: React.FC<Props> = ({ data, meta,setMeta, onCreate,setFilter,filter,resetPage }) => {
+const StudentTable: React.FC<Props> = ({ data, meta,setMeta, onCreate,setFilter,filter,resetPage }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
   const [sortKey, setSortKey] = useState<keyof DataStudents>('_id');
@@ -254,7 +254,7 @@ const DataTable: React.FC<Props> = ({ data, meta,setMeta, onCreate,setFilter,fil
     <div className="p-4 border rounded-xl bg-white dark:bg-white/[0.02] overflow-auto">
       <div className="flex justify-between mb-4">
       <div className="flex items-center">
-          <h2 className="text-xl font-semibold">Students</h2>
+          <h2 className="text-xl font-semibold">Students ({meta.total})</h2>
           <input
             type="text"
             placeholder="Search..."
@@ -470,11 +470,6 @@ const DataTable: React.FC<Props> = ({ data, meta,setMeta, onCreate,setFilter,fil
                     <Label>Code Id</Label>
                     <Input type="text" name="codeId" value={form.codeId}  onChange={handleChange} />
                   </div>
-
-
-                 
-
-                  
                 </div>
               </div>
             </div>
@@ -519,4 +514,4 @@ const DataTable: React.FC<Props> = ({ data, meta,setMeta, onCreate,setFilter,fil
   );
 };
 
-export default DataTable;
+export default StudentTable;

@@ -5,7 +5,7 @@ export class AddStudentToCourse{
     @IsNotEmpty()
     idstudent: string;
     @IsNotEmpty()
-    idcourse: number;
+    idcourse: string;
 }
 
 export class AddStudentToCourseMulti{
@@ -13,7 +13,7 @@ export class AddStudentToCourseMulti{
     idstudent: string[];
     @IsNotEmpty()
     @ApiProperty({ description: 'Course ID to add students to type number' })
-    idcourse: number;
+    idcourse: string;
 }
 
 

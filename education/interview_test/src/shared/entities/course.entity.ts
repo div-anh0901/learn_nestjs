@@ -1,12 +1,12 @@
 // courses/entities/course.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, VersionColumn } from 'typeorm';
 import { Array_student } from './array_student.entity';
 import { ClassSchedule } from './class.entity';
 
 @Entity()
 export class Course {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
   title: string;
@@ -18,10 +18,16 @@ export class Course {
   teacher: string; // giao vien chu nhiem
 
   @Column()
-  time: string; // thời gian kéo dài
+  time: number; // thời gian kéo dài  lưa bằng phú
 
   @Column('text')
   description: string;
+
+  @VersionColumn()
+  version: string;
+
+  @Column()
+  subject: string;
 
   @Column()
   createdBy: string; // userId từ MongoDB

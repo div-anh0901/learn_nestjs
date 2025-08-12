@@ -18,4 +18,7 @@ export class Array_student {
   
     @CreateDateColumn({ type: 'timestamp' })
     updatedDate: Date;
+
+    @CreateDateColumn({ type: 'timestamp' })
+    removedDate: Date;
 }

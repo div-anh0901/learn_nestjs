@@ -19,6 +19,7 @@ import { FaRegAddressBook } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
+import { FaChalkboardTeacher } from "react-icons/fa";
 
 type NavItem = {
   name: string;
@@ -31,9 +32,13 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+    subItems: [{ name: "Education", path: "/", pro: false }],
   },
-  
+  {
+    icon: <FaChalkboardTeacher />,
+    name: "Mangement Teachers",
+    path: "/management_teachers",
+  },
   {
     icon: <PiStudentDuotone />,
     name: "Mangement Students",
@@ -41,8 +46,8 @@ const navItems: NavItem[] = [
   },
   {
     icon: <FaRegAddressBook />,
-    name: "Mangement Course",
-    path: "/management_coures",
+    name: "Mangement Courses",
+    path: "/management_courses",
   },
   {
     icon: <SiGoogleclassroom />,

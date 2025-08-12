@@ -13,7 +13,10 @@ import { UsersModule } from "src/users/user.module";
     TypeOrmModule.forFeature([Course]),
     UsersModule
   ],
-  providers: [CoursesService],
+  providers: [ {
+    useClass: CoursesService,
+    provide: "ICoursesSerivce"
+  }],
   controllers: [CoursesController],
 })
 export class CoursesModule {}

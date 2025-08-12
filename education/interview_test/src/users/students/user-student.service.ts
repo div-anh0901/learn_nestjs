@@ -11,7 +11,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Course } from "src/shared/entities/course.entity";
 import { Repository } from "typeorm";
 import { Array_student } from "src/shared/entities/array_student.entity";
-import { AddStudentToCourse, AddStudentToCourseMulti } from "../dto/student-and-course.dto";
+import { AddStudentToCourse, AddStudentToCourseMulti, ImportExcelStudent } from "../dto/student-and-course.dto";
 import { faker } from '@faker-js/faker';
 import * as ExcelJS from 'exceljs';
 import * as path from 'path';
@@ -51,7 +51,7 @@ export class UserStudentService implements IUserStudentService  {
     
     return this.userModel.create(users);
   }
-     async createStudent(student: CreateStudentDto): Promise<CreateStudentDto> {
+     async create(student: CreateStudentDto): Promise<CreateStudentDto> {
         const hashedPassword = await bcrypt.hash("12345678", 10); //password default = 12345678
 
         const isExists = await this.userModel.findOne({email: student.email});
@@ -81,7 +81,7 @@ export class UserStudentService implements IUserStudentService  {
       };
     }
 
-    async updateUser(idstudent: string, data: UpdateStudentDto): Promise<ResponseBoolean> {
+    async update(idstudent: string, data: UpdateStudentDto): Promise<ResponseBoolean> {
       const student = await this.userModel.findById(idstudent);
       if (!student) throw new NotFoundException('User not found');
 
@@ -100,10 +100,7 @@ export class UserStudentService implements IUserStudentService  {
       };
     }
 
-    async getAllStudent(pagi: PaginationQueryDto) {
-      var option = {  
-        role: "student"
-      }
+    async getAll(pagi: PaginationQueryDto, option: any) {
       if(pagi != null){
           const { limit = pagi.limit, page = pagi.page , findText } = pagi;
           const skip = (page - 1)  * limit;
@@ -140,17 +137,20 @@ export class UserStudentService implements IUserStudentService  {
 
 
 
-    async getOneStudent(idstudent: string) {
+    async getOne(idstudent: string) {
       const student = await this.userModel.findById(idstudent);
       if (!student) throw new NotFoundException('User not found or be deleted');
       return student
     }
 
-    async deleteStudent(idstudent: string): Promise<Boolean> {
+    async delete(idstudent: string): Promise<Boolean> {
       const student = await this.userModel.findById(idstudent);
       if (!student) throw new NotFoundException('User not found or be deleted');
       try {
-        await this.userModel.deleteOne({_id:idstudent});
+        await this.userModel.updateOne({_id: idstudent}, {
+          isDeleted: true
+        });
+       // await this.userModel.deleteOne({_id:idstudent});
         return true
       } catch (error) {
         throw new NotImplementedException("Process delete student being failed!!")
@@ -241,17 +241,39 @@ export class UserStudentService implements IUserStudentService  {
       }
       
       const filename = `export-${Date.now()}.xlsx`;
-    const exportDir = path.join(__dirname, '../../exports');
+      const exportDir = path.join(__dirname, '../../exports');
 
-    // Ensure directory exists
-    if (!fs.existsSync(exportDir)) {
-      fs.mkdirSync(exportDir, { recursive: true });
+      // Ensure directory exists
+      if (!fs.existsSync(exportDir)) {
+        fs.mkdirSync(exportDir, { recursive: true });
+      }
+
+      const filepath = path.join(exportDir, filename);
+      await workbook.xlsx.writeFile(filepath);
+
+      return filepath;
     }
 
-    const filepath = path.join(exportDir, filename);
-    await workbook.xlsx.writeFile(filepath);
-
-    return filepath;
+    importExcel(rows: ImportExcelStudent[]) {
+      const insertPromises = rows.map(async (row) => {
+        const isCheck = await this.userModel.findOne({"$or": [{email: row.email}, {username: row.username}]})
+        if(!isCheck){
+          this.userModel.create(row)
+        }
+      } );
+      return Promise.all(insertPromises)
+      .then((createdDocs) => ({
+        message: 'Imported to MongoDB using Promises',
+        meta: {
+          totalSuccess: createdDocs.length,
+        },
+        data: createdDocs,
+      }))
+      .catch((error) => {
+        throw new Error('Failed to import: ' + error.message);
+      });
+      
     }
+    
 }
 
